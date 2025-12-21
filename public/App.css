@@ -1,0 +1,153 @@
+:root {
+  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  color: #0f0f0f;
+  background-color: #f6f6f6;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
+  /* 更新主题色为紫色系 */
+  --primary-color: #8a2be2;
+  /* 主紫色 */
+  --hover-color: #9b4dff;
+  /* 悬停色 */
+  --background-light: #ffffff;
+  --background-dark: #0f0f0f98;
+  --shadow-color: rgba(138, 43, 226, 0.2);
+  /* 紫色阴影 */
+  --accent-color: #d8bfd8;
+  /* 浅紫色辅助色 */
+  --text-color: #4b0082;
+  /* 深紫色文字 */
+}
+
+/* 添加现代化UI样式 */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+  /* 添加现代化阴影和圆角 */
+  border-radius: 16px;
+  box-shadow: 0 4px 20px var(--shadow-color);
+}
+
+/* 添加悬停效果 */
+.logo:hover {
+  filter: drop-shadow(0 0 10px var(--hover-color));
+}
+
+
+button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px var(--shadow-color);
+}
+
+button:hover {
+  background-color: var(--hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+input,
+textarea {
+  border: 2px solid var(--accent-color);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--background-light);
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--shadow-color);
+}
+
+/* 为卡片类元素添加样式 */
+.card {
+  background-color: var(--background-light);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--shadow-color);
+  padding: 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 25px var(--shadow-color);
+}
+
+/* 添加链接样式 */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--hover-color);
+  text-decoration: underline;
+}
+
+.App {
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.App-header {
+  padding: 20px;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+}
+
+.App-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin-bottom: 0;
+}
+
+main {
+  flex: 1;
+  padding: 0;
+}
+
+.App-footer {
+  padding: 15px;
+  background-color: #f8f9fa;
+  color: #667781;
+  font-size: 0.9rem;
+  border-top: 1px solid #e9edef;
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "myapp",
+  "version": "0.1.0",
+  "identifier": "com.user.myapp",
+  "build": {
+    "removeUnusedCommands": true,
+    "beforeDevCommand": "yarn dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "yarn build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "resizable": true,
+        "center": true,
+        "title": "myapp"
+      }
+    ],
+    "security": {
+      "csp": {
+        "default-src": "'self' tauri:",
+        "script-src": "'self' tauri:",
+        "style-src": "'self' 'nonce-${nonce}'",
+        "img-src": "'self' tauri: data: blob:",
+        "connect-src": "tauri://localhost.ipc ws: wss:",
+        "object-src": "'self'",
+        "frame-src": "'self'"
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  },
+  "plugins": {
+    "cli": {
+      "description": "App:mychat <-tauri cli plugin 2025 0.1.0beta --made-by wyx>",
+      "longDescription": "an app to chat with your friends or an AI| args: [--verbose] [--help]",
+      "args": [
+        {
+          "short": "s",
+          "name": "server",
+          "description": "server mode",
+          "takesValue": false,
+          "multiple": false,
+          "required": false,
+          "global": true
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,372 @@
+/* 基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* 主容器 */
+.chat-container {
+    display: flex;
+    height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+/* 侧边栏 */
+.sidebar {
+    width: 280px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #e9edef;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #e9edef;
+}
+
+.sidebar-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #111b21;
+    margin-bottom: 8px;
+}
+
+.user-status {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #667781;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    background-color: #00a884;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+/* 联系人列表 */
+.contacts-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.contact-item:hover {
+    background-color: #f0f2f5;
+}
+
+.contact-item.active {
+    background-color: #e9edef;
+}
+
+.contact-avatar {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #00a884;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: white;
+    font-weight: 600;
+}
+
+.status-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #f8f9fa;
+    bottom: 0;
+    right: 0;
+}
+
+.status-dot.online {
+    background-color: #00a884;
+}
+
+.status-dot.away {
+    background-color: #ffb347;
+}
+
+.status-dot.offline {
+    background-color: #a0a0a0;
+}
+
+.contact-name {
+    font-weight: 500;
+    color: #111b21;
+    margin-bottom: 3px;
+}
+
+.contact-status {
+    font-size: 13px;
+    color: #667781;
+}
+
+/* 主聊天区域 */
+.main-chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* 聊天头部 */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e9edef;
+    background-color: #f0f2f5;
+}
+
+.chat-contact-info {
+    display: flex;
+    align-items: center;
+}
+
+.chat-contact-avatar {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #6a11cb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: white;
+    font-weight: 600;
+}
+
+.chat-contact-name {
+    font-weight: 500;
+    color: #111b21;
+}
+
+.chat-contact-status {
+    font-size: 13px;
+    color: #667781;
+}
+
+/* 消息区域 */
+.messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #efeae2;
+}
+
+.messages-list {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 消息样式 */
+.message-wrapper {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.message-sent {
+    justify-content: flex-end;
+}
+
+.message-received {
+    justify-content: flex-start;
+}
+
+.message {
+    max-width: 70%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.1);
+}
+
+.message-sent .message {
+    background-color: #d9fdd3;
+    border-top-right-radius: 0;
+}
+
+.message-received .message {
+    background-color: #fff;
+    border-top-left-radius: 0;
+}
+
+.message-text {
+    font-size: 15px;
+    line-height: 1.4;
+    color: #111b21;
+    word-break: break-word;
+}
+
+.message-meta {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 4px;
+    font-size: 11px;
+    color: #667781;
+}
+
+.message-time {
+    margin-right: 5px;
+}
+
+.message-status {
+    font-size: 12px;
+}
+
+/* 正在输入指示器 */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding: 10px 15px;
+    background-color: #fff;
+    border-radius: 18px;
+    width: fit-content;
+    box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.1);
+}
+
+.typing-dots {
+    display: flex;
+    margin-right: 10px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #9ca3af;
+    margin: 0 2px;
+    animation: typingAnimation 1.5s infinite ease-in-out;
+}
+
+.dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingAnimation {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+    }
+
+    30% {
+        transform: translateY(-5px);
+    }
+}
+
+.typing-text {
+    font-size: 14px;
+    color: #667781;
+}
+
+/* 输入区域 */
+.input-area {
+    display: flex;
+    align-items: flex-end;
+    padding: 15px 20px;
+    background-color: #f0f2f5;
+    border-top: 1px solid #e9edef;
+    gap: 12px;
+}
+
+.message-input-wrapper {
+    flex: 1;
+}
+
+.message-input {
+    width: 100%;
+    min-height: 44px;
+    max-height: 120px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background-color: #fff;
+    font-size: 15px;
+    resize: none;
+    outline: none;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+}
+
+.message-input:focus {
+    box-shadow: 0 0 0 2px #00a88433;
+}
+
+.send-button {
+    height: 44px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #00a884;
+    color: white;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.send-button:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+.send-button:not(:disabled):hover {
+    background-color: #008f71;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .chat-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: 30%;
+        border-right: none;
+        border-bottom: 1px solid #e9edef;
+    }
+
+    .main-chat {
+        height: 70%;
+    }
+
+    .message {
+        max-width: 85%;
+    }
+}
