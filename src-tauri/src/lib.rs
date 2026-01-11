@@ -1,9 +1,11 @@
 use anyhow::Result;
 use std::fmt::Debug;
+use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
+use tauri::tray::{MouseButton, TrayIconBuilder};
 use tauri::AppHandle;
 use tauri_plugin_cli::CliExt;
-
 mod port;
+use tauri::Manager;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -36,6 +38,33 @@ pub fn run() -> Result<(), anyhow::Error> {
         .plugin(tauri_plugin_cli::init())
         .setup(|app| {
             print!("setting up");
+            let apphandle = app.handle();
+
+            let quit_i = check(MenuItem::with_id(
+                apphandle,
+                "quit",
+                "Quit",
+                true,
+                None::<&str>,
+            ));
+            let menu = check(Menu::with_items(apphandle, &[&quit_i]));
+
+            let tray: tauri::tray::TrayIcon = check(
+                TrayIconBuilder::new()
+                    .menu(&menu)
+                    .show_menu_on_left_click(true)
+                    .build(apphandle),
+            );
+            let window = apphandle.get_webview_window("main");
+            if let Some(window) = window {
+                if cfg!(debug_assertions) {
+                    if let Ok(url) = window.url() {
+                        println!(">>> Tauri will load: {}", url);
+                    }
+                }
+            } else {
+                eprintln!("Error: Could not get main window");
+            }
             match app.handle().cli().matches() {
                 // `matches` here is a Struct with { args, subcommand }.
                 // `args` is `HashMap<String, ArgData>` where `ArgData` is a struct with { value, occurrences }.
