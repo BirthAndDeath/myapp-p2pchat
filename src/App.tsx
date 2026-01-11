@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react';
 
 import './App.css';
 
@@ -6,12 +5,9 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/core";
-import { TrayIcon } from '@tauri-apps/api/tray';
-import { defaultWindowIcon } from '@tauri-apps/api/app';
 
 import { Routes, Route, Link, useNavigate, Outlet } from 'react-router-dom';
 import "./App.css";
-import QRCode from 'qrcode'
 
 
 
@@ -100,6 +96,7 @@ const Contacts = <h2>Contacts</h2>
 
 import { Menu } from '@tauri-apps/api/menu';
 async function exitApp() {
+  //todo : 退出app功能实现，用于后台退出
   await invoke('exit_app');
 }
 async function app_init() {
