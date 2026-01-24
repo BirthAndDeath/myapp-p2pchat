@@ -59,6 +59,6 @@ lto = false
 [profile.release]
 codegen-units = 1 # 允许 LLVM 执行更好的优化。
 lto = true        # 启用链接时优化。
-opt-level = 3     # 's'优先考虑小的二进制文件大小。如果您更喜欢速度，请使用 `3`。
+opt-level = 's'   # 's'优先考虑小的二进制文件大小。如果您更喜欢速度，请使用 `3`。
 panic = "abort"   # 通过禁用 panic 处理程序来提高性能。
 strip = true      # 确保移除调试符号。

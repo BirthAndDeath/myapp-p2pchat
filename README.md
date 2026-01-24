@@ -1,12 +1,19 @@
 # myapp
 
-myapp 是一个基于 Tauri 框架构建的跨平台桌面应用程序，目前处于非常早期的开发阶段。本项目旨在提供一个高性能、低资源占用的桌面工具，集成了条码扫描、命令行接口等多种实用功能。
+myapp 是一个基于 Tauri 框架构建的跨平台桌面应用程序，目前处于非常早期的开发阶段。本项目旨在提供一个高性能、低资源占用的聊天应用。
+
+### Attention
+- 此项目版本目前未经审计
+- 功能不完善，无完整社区
+
+## License
+This project is licensed under the [GNU Affero General Public License v3.0](LICENSE).
+出于对通信软件安全性的考虑，暂定为传染性开源，转发服务等未来计划功能包含不会传染性
 
 ## 项目状态
-
+version:0.0.1
 🚧 此项目目前处于**非常早期的开发阶段**。功能尚不完善。欢迎提供建议！
 
-version:0.0.1beta
 ## 特性
 
 - **跨平台支持**：可在 Windows、macOS 和 Linux 上运行
@@ -45,18 +52,20 @@ yarn install
 yarn tauri dev
 ```
 
-### 生产构建
+### 开发构建
 
 ```bash
-# 构建发行版
+# 构建
 yarn tauri build
 ```
 
-
-
-## License
-This project is licensed under the [GNU Affero General Public License v3.0](LICENSE).
-出于对通信软件安全性的考虑，暂定为传染性开源，转发服务等未来计划功能包含不会传染性
 ---
 ## HISTORY
 - 2025 创建项目
+- 2026 摸鱼中
+## PLAN
+先搭建基础框架
+
+## 吐槽
+在上学，无时间😭
+希望有大佬帮忙一起开发，我太菜了
