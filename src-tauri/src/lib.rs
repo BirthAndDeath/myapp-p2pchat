@@ -3,8 +3,8 @@ use std::fmt::Debug;
 
 use tauri::AppHandle;
 
+mod core;
 mod port;
-
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -29,9 +29,9 @@ pub fn check<T, E: Debug>(r: Result<T, E>) -> T {
 
 /// 启动 Tauri 应用程序的主函数
 ///
-
+#[tokio::main]
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() -> Result<(), anyhow::Error> {
+pub async fn run() -> Result<(), anyhow::Error> {
     let mut builder = tauri::Builder::default()
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_opener::init());
