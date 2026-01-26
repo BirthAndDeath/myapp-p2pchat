@@ -1,9 +1,8 @@
 use anyhow::Result;
 use std::fmt::Debug;
 
+use appcore::*;
 use tauri::AppHandle;
-
-mod core;
 mod port;
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
