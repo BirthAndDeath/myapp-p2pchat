@@ -19,7 +19,7 @@ tauri-build = { version = "2", features = [] }
 
 
 [dependencies]
-appcore = { path = "../mychat_core" }
+appcore = { path = "../chat_core" }
 tokio-rusqlite = "0.7.0"
 
 
