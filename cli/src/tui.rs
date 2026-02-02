@@ -10,11 +10,13 @@ use ratatui::{Frame, Terminal};
 use std::io::{IsTerminal, stdout};
 use std::net::SocketAddr;
 use std::sync::Arc;
+use std::time::Duration;
 use tokio::net::UdpSocket;
 use tokio::sync::mpsc;
+use tokio::time::interval;
 
 use crate::{App, Focus};
-fn tui(frame: &mut Frame, app: &App) {
+fn tui_render(frame: &mut Frame, app: &App) {
     // 创建布局
     // 水平切分（左右）
     let horizontal_chunks = Layout::default()
@@ -39,7 +41,7 @@ fn tui(frame: &mut Frame, app: &App) {
     let messages_area = right_vertical[0]; // 消息区
     let input_area = right_vertical[1]; // 输入区
 
-    //  渲染消息列表（List 组件）
+    //  渲染消息列表（List 组件）感谢ai帮我写注释（）
     let messages: Vec<ListItem> = app
         .messages
         .iter()
@@ -88,9 +90,18 @@ fn tui(frame: &mut Frame, app: &App) {
 
     //  渲染状态栏
     let status = match app.current_focus {
-        Focus::Messages => "模式: 浏览消息 (↑/↓选择，Tab切换到输入框)",
-        Focus::Input => "模式: 输入文本 (Enter发送，Tab切换到消息列表，Esc清空)",
-        Focus::SidebarArea => "模式:选择聊天对象↑/↓选择",
+        Focus::Messages => format!(
+            "ipv6: {} 模式: 浏览消息 (↑/↓选择)",
+            app.local_addr.to_string()
+        ),
+        Focus::Input => format!(
+            "ipv6: {} 模式: 输入文本 (Enter发送，Tab切换焦点，Esc退出应用)",
+            app.local_addr.to_string()
+        ),
+        Focus::SidebarArea => format!(
+            "ipv6: {} 模式:选择聊天对象↑/↓选择",
+            app.local_addr.to_string()
+        ),
     };
     let status_bar = Paragraph::new(status).block(Block::default().borders(Borders::TOP));
     frame.render_widget(status_bar, messages_area);
@@ -123,7 +134,7 @@ fn handle_messages_focus(app: &mut App, key_code: KeyCode) {
                 app.list_state.select(Some((i + 1).min(list_len - 1)));
             }
         }
-        KeyCode::Tab => app.current_focus = Focus::Input,
+
         KeyCode::Enter => {
             // 回复选中的消息
             if let Some(i) = app.list_state.selected() {
@@ -139,7 +150,6 @@ fn handle_messages_focus(app: &mut App, key_code: KeyCode) {
 
 fn handle_input_focus(app: &mut App, key_code: KeyCode) {
     match key_code {
-        KeyCode::Tab => app.current_focus = Focus::Messages,
         KeyCode::Enter => {
             // 发送消息
             if !app.input.trim().is_empty() {
@@ -150,6 +160,7 @@ fn handle_input_focus(app: &mut App, key_code: KeyCode) {
                 app.list_state.select(Some(app.messages.len() - 1));
             }
         }
+
         KeyCode::Char(c) => app.input.push(c),
         KeyCode::Backspace => {
             app.input.pop();
@@ -158,10 +169,20 @@ fn handle_input_focus(app: &mut App, key_code: KeyCode) {
         _ => {}
     }
 }
+impl Focus {
+    fn next_focus(self) -> Self {
+        match self {
+            Focus::Input => Focus::Messages,
+            Focus::Messages => Focus::SidebarArea,
+            Focus::SidebarArea => Focus::Input, //懒得写复杂轮换了……就这样凑合着吧或者谁来帮我写一下方向轮换
+        }
+    }
+}
+
 ///tui模式
 pub async fn tui_run(app: &mut App) -> std::io::Result<()> {
     let mut event_stream = crossterm::event::EventStream::new();
-    let socket = Arc::new(UdpSocket::bind("[::]:0").await?); //绑定到ipv6端口
+    //绑定到ipv6端口
     enable_raw_mode()?;
     let mut targets: Vec<SocketAddr> = vec![];
     // 初始化终端
@@ -169,7 +190,7 @@ pub async fn tui_run(app: &mut App) -> std::io::Result<()> {
     terminal.clear()?;
 
     let (data_tx, mut data_rx) = mpsc::channel::<(usize, SocketAddr, Vec<u8>)>(100);
-    let recv_socket = socket.clone();
+    let recv_socket = app.socket.clone();
     tokio::spawn(async move {
         let mut buf = [0u8; 1024]; // 接收缓冲区
         loop {
@@ -191,35 +212,44 @@ pub async fn tui_run(app: &mut App) -> std::io::Result<()> {
     });
 
     loop {
-        terminal.draw(|frame| tui(frame, &app))?;
+        let mut tick = interval(Duration::from_millis(50));
         tokio::select! {
+            biased;
+            Some(Ok(event)) = event_stream.next() => {
+                if let Event::Key(key)=event
+                &&key.kind == KeyEventKind::Press{
+                match  key.code {
+                    KeyCode::Esc=> break,
+                    KeyCode::Tab =>app.current_focus= app.current_focus.next_focus(),
+                    _=>{
 
-        Some(Ok(event)) = event_stream.next() => {
-            if let Event::Key(key)=event
-                &&key.kind == KeyEventKind::Press&& key.code ==KeyCode::Esc {
-                break;
-
+                    },
+                }}
+                handle_event(app, event)?;
             }
-            handle_event(app, event)?;
-        }
 
 
             Some((size, src_addr, data)) = data_rx.recv() => {
                 // 在这里处理或显示接收到的数据
                 let text = String::from_utf8_lossy(&data);
-                 app.input =format!("\n[网络] 来自 {} 的消息 ({} 字节): {}",
-                    src_addr, size, text);
+                 app.messages.push(format!("\n[网络] 来自 {} 的消息 ({} 字节): {}",
+                    src_addr, size, text));
 
+            }
+            _ = tick.tick() => {}
+            else =>{
+                break;
             }
 
         }
         if app.should_quit {
             break;
         }
+        terminal.draw(|frame| tui_render(frame, &app))?;
     }
     disable_raw_mode()?;
-    // 恢复终端
     terminal.clear()?;
     terminal.show_cursor()?;
+    // 恢复终端
     Ok(())
 }

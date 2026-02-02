@@ -35,7 +35,7 @@ pub struct App {
     local_addr: SocketAddr,
     socket: Arc<UdpSocket>,
 }
-
+#[derive(Debug, Clone, Copy, PartialEq)]
 // 定义焦点枚举
 enum Focus {
     Messages,

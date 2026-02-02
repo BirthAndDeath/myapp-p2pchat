@@ -1,7 +1,7 @@
 use anyhow::Result;
 use std::fmt::Debug;
 
-use appcore::*;
+use chat_core::*;
 use tauri::AppHandle;
 mod port;
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/

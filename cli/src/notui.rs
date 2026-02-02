@@ -5,7 +5,7 @@ use tokio::net::UdpSocket;
 pub async fn no_tui_run(app: &mut App) -> std::io::Result<()> {
     let mut targets: Vec<SocketAddr> = vec![];
 
-    //不想写注释了，自己读吧好累（我的命名应该已经很贴切了）
+    //不想写注释了，自己读吧好累（我的命名应该已经很贴切了,大概？）
 
     println!("监听: {}", &app.local_addr);
     println!("输入目标 IPv6 地址（如 [::1]:8000):");
