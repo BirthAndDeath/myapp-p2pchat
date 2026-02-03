@@ -36,20 +36,7 @@ keyring = { version = "3", features = [
     "linux-native-sync-persistent",
 ] }
 tss-esapi = { version = "7.5", optional = true }
-[profile.dev]
-panic = "abort"
 
-[profile.release]
-# 生产配置：最大化安全性和性能
-opt-level = 3
-debug = false            # 无调试符号（或 limited）
-debug-assertions = false
-overflow-checks = true   # 保持溢出检查（安全关键）
-lto = "fat"              # 全链接时优化，消除死代码
-panic = "abort"          # 无 unwinding
-codegen-units = 1        # 单代码生成单元，最大化优化
-strip = "symbols"        # 剥离符号
-rpath = false
 [package.metadata.cargo-deny]
 # 禁止不安全代码的依赖
 multiple-versions = "warn"
