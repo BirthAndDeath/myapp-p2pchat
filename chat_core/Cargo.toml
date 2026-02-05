@@ -4,4 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+anyhow = "1.0.100"
+quinn = "0.11.9"
 rootcell = { workspace = true }
+
+sqlx = { version = "0.8.6", features = ["sqlite", "runtime-tokio", "macros"] }

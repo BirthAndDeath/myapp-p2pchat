@@ -25,7 +25,7 @@ android-activity = { version = "0.6", features = ["native-activity"] }
 
 [target.'cfg(any(target_os = "ios"))'.dependencies]
 security-framework = "3.5.1"
-security-framework-sys = "2.0"
+security-framework-sys = "2.15"
 keyring = { version = "3", features = ["apple-native"] }
 
 # Windows / Linux / macOS 通用
@@ -35,7 +35,7 @@ keyring = { version = "3", features = [
     "windows-native",
     "linux-native-sync-persistent",
 ] }
-tss-esapi = { version = "7.5", optional = true }
+tss-esapi = { version = "7.6", optional = true }
 
 [package.metadata.cargo-deny]
 # 禁止不安全代码的依赖

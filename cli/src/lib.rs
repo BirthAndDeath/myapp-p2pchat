@@ -1,18 +1,8 @@
-use clap::Parser;
-use crossterm::event::{Event, KeyCode, KeyEventKind};
-use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
-use futures::StreamExt;
-use ratatui::layout::{Constraint, Direction, Layout};
-use ratatui::prelude::CrosstermBackend;
-use ratatui::style::{Color, Modifier, Style};
-use ratatui::text::Text;
-use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap};
-use ratatui::{Frame, Terminal};
-use std::io::{IsTerminal, stdout};
+use ratatui::widgets::ListState;
+use socket2::Socket;
 use std::net::SocketAddr;
-use std::sync::{Arc, OnceLock};
+use std::sync::Arc;
 use tokio::net::UdpSocket;
-use tokio::sync::{Mutex, mpsc};
 pub mod notui;
 pub mod tui;
 
@@ -26,8 +16,10 @@ pub struct App {
 
     // --- 消息列表组件及其状态 ---
     messages: Vec<String>, // 所有消息
-    list_state: ListState,
+    message_list_state: ListState,
 
+    //contacts:HashMap<id,Socket>;
+    contact_list_state: ListState,
     // --- 输入框组件 ---
     input: String, // 当前输入的文本
 
@@ -59,7 +51,8 @@ impl App {
                 "按 Ctrl+Tab 切换焦点，↑↓ 选择消息".to_string(),
                 "按 Esc或Ctrl+C 退出应用，在输入框中Ctrl+Enter 发送".to_string(),
             ],
-            list_state,
+            message_list_state: list_state,
+            contact_list_state: list_state,
             input: String::new(),
             should_quit: false,
             local_addr,

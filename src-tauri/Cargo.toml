@@ -22,7 +22,6 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 rootcell = { workspace = true }
 chat_core = { workspace = true }
-tokio-rusqlite = "0.7.0"
 
 
 tauri = { version = "2", features = ["tray-icon"] }

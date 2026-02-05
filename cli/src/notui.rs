@@ -1,7 +1,6 @@
-use crate::{App, Focus};
+use crate::App;
 use std::net::SocketAddr;
 use std::sync::Arc;
-use tokio::net::UdpSocket;
 pub async fn no_tui_run(app: &mut App) -> std::io::Result<()> {
     let mut targets: Vec<SocketAddr> = vec![];
 

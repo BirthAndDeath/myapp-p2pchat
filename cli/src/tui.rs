@@ -5,17 +5,23 @@ use ratatui::layout::{Constraint, Direction, Layout};
 use ratatui::prelude::CrosstermBackend;
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::Text;
-use ratatui::widgets::{Block, Borders, List, ListItem, ListState, Paragraph, Wrap};
+use ratatui::widgets::{Block, Borders, List, ListItem, Paragraph, Wrap};
 use ratatui::{Frame, Terminal};
-use std::io::{IsTerminal, stdout};
+use std::io::stdout;
 use std::net::SocketAddr;
-use std::sync::Arc;
 use std::time::Duration;
-use tokio::net::UdpSocket;
 use tokio::sync::mpsc;
 use tokio::time::interval;
 
 use crate::{App, Focus};
+fn getcontacts(contacts: &mut Vec<ListItem>) {
+    let list = vec!["a".to_string(), "b".to_string()];
+    *contacts = list
+        .iter()
+        .map(|m| ListItem::new(Text::from(m.clone())))
+        .collect::<Vec<ListItem>>()
+        .clone();
+}
 fn tui_render(frame: &mut Frame, app: &App) {
     // 创建布局
     // 水平切分（左右）
@@ -66,11 +72,37 @@ fn tui_render(frame: &mut Frame, app: &App) {
         .highlight_symbol(">> ");
 
     // 渲染带有状态的List
-    frame.render_stateful_widget(message_list, messages_area, &mut app.list_state.clone());
+    frame.render_stateful_widget(
+        message_list,
+        messages_area,
+        &mut app.message_list_state.clone(),
+    );
+    let mut contacts: Vec<ListItem> = vec![];
+    getcontacts(&mut contacts);
 
+    let contact_list = List::new(contacts)
+        .block(
+            Block::default()
+                .title(" 联系人列表 ")
+                .borders(Borders::ALL)
+                .border_style(match app.current_focus {
+                    Focus::SidebarArea => Style::default().fg(Color::Yellow),
+                    _ => Style::default(),
+                }),
+        )
+        .highlight_style(
+            Style::default()
+                .bg(Color::DarkGray)
+                .add_modifier(Modifier::BOLD),
+        )
+        .highlight_symbol(">> ");
+    frame.render_stateful_widget(
+        contact_list,
+        sidebar_area,
+        &mut app.contact_list_state.clone(),
+    );
 
-
-    // 3. 渲染输入框
+    // 渲染输入框
     let input = Paragraph::new(app.input.as_str())
         .block(
             Block::default()
@@ -120,26 +152,54 @@ fn handle_event(app: &mut App, event: Event) -> std::io::Result<()> {
     }
     Ok(())
 }
-fn handle_sidebar_area_focus(app: &mut App, key_code: KeyCode) {}
-fn handle_messages_focus(app: &mut App, key_code: KeyCode) {
-    let list_len = app.messages.len();
+fn handle_sidebar_area_focus(_app: &mut App, _key_code: KeyCode) {
+    /*let list_len = app.conta.len();
     match key_code {
         KeyCode::Up => {
             if list_len > 0 {
-                let i = app.list_state.selected().unwrap_or(0);
-                app.list_state.select(Some(i.saturating_sub(1)));
+                let i = app.message_list_state.selected().unwrap_or(0);
+                app.message_list_state.select(Some(i.saturating_sub(1)));
             }
         }
         KeyCode::Down => {
             if list_len > 0 {
-                let i = app.list_state.selected().unwrap_or(0);
-                app.list_state.select(Some((i + 1).min(list_len - 1)));
+                let i = app.message_list_state.selected().unwrap_or(0);
+                app.message_list_state
+                    .select(Some((i + 1).min(list_len - 1)));
             }
         }
 
         KeyCode::Enter => {
             // 回复选中的消息
-            if let Some(i) = app.list_state.selected() {
+            if let Some(i) = app.message_list_state.selected() {
+                if let Some(msg) = app.messages.get(i) {
+                    app.input = format!("回复「{}」: ", msg);
+                    app.current_focus = Focus::Input;
+                }
+            }
+        }
+        _ => {}*/
+}
+fn handle_messages_focus(app: &mut App, key_code: KeyCode) {
+    let list_len = app.messages.len();
+    match key_code {
+        KeyCode::Up => {
+            if list_len > 0 {
+                let i = app.message_list_state.selected().unwrap_or(0);
+                app.message_list_state.select(Some(i.saturating_sub(1)));
+            }
+        }
+        KeyCode::Down => {
+            if list_len > 0 {
+                let i = app.message_list_state.selected().unwrap_or(0);
+                app.message_list_state
+                    .select(Some((i + 1).min(list_len - 1)));
+            }
+        }
+
+        KeyCode::Enter => {
+            // 回复选中的消息
+            if let Some(i) = app.message_list_state.selected() {
                 if let Some(msg) = app.messages.get(i) {
                     app.input = format!("回复「{}」: ", msg);
                     app.current_focus = Focus::Input;
@@ -159,7 +219,7 @@ fn handle_input_focus(app: &mut App, key_code: KeyCode) {
                 //send
                 app.input.clear();
                 // 自动滚动到最新消息
-                app.list_state.select(Some(app.messages.len() - 1));
+                app.message_list_state.select(Some(app.messages.len() - 1));
             }
         }
 
@@ -186,7 +246,7 @@ pub async fn tui_run(app: &mut App) -> std::io::Result<()> {
     let mut event_stream = crossterm::event::EventStream::new();
     //绑定到ipv6端口
     enable_raw_mode()?;
-    let mut targets: Vec<SocketAddr> = vec![];
+    let _targets: Vec<SocketAddr> = vec![];
     // 初始化终端
     let mut terminal = Terminal::new(CrosstermBackend::new(stdout()))?;
     terminal.clear()?;

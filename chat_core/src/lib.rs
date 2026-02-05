@@ -1,3 +1,12 @@
+pub mod storage;
+struct CoreConfig {
+    database_path: str,
+}
+struct ChatCore {}
+pub fn init() {
+    if let Err(e) = storage::init() {}
+}
+
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
