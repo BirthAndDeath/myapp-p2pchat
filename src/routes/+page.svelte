@@ -16,7 +16,7 @@
 
   <div class="row">
     <a href="https://github.com/BirthAndDeath/chat" target="_blank">
-      <img src="/svelte.svg" class="logo chat" alt="Chat Logo" />
+      <img src="/logo.svg" class="logo chat" alt="Chat Logo" />
     </a>
   </div>
   <p>Click on the Tauri, Vite, and SvelteKit logos to learn more.</p>
