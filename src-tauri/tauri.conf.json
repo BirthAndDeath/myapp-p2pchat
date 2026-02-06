@@ -18,7 +18,18 @@
       }
     ],
     "security": {
-      "csp": null
+      "pattern": {
+        "use": "isolation",
+        "options": {
+          "dir": "../dist-isolation"
+        }
+      },
+      "csp": {
+        "default-src": "'self'",
+        "connect-src": "'self'",
+        "script-src": "'self'",
+        "style-src": "'self' 'unsafe-inline'"
+      }
     }
   },
   "bundle": {
