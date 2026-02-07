@@ -4,8 +4,21 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-anyhow = "1.0.100"
+anyhow = "1.0.101"
+futures = "0.3.31"
+libp2p = { version = "0.56.0", features = [
+    "tokio",
+    "gossipsub",
+    "mdns",
+    "noise",
+    "macros",
+    "tcp",
+    "yamux",
+    "quic",
+] }
 quinn = "0.11.9"
 rootcell = { workspace = true }
 
 sqlx = { version = "0.8.6", features = ["sqlite", "runtime-tokio", "macros"] }
+tokio = "1.49.0"
+tracing-subscriber = "0.3.22"

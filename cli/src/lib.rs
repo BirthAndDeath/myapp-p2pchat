@@ -1,5 +1,7 @@
+use chat_core::ChatCore;
 use ratatui::widgets::ListState;
 use socket2::Socket;
+use std::any;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio::net::UdpSocket;
@@ -24,8 +26,7 @@ pub struct App {
     input: String, // 当前输入的文本
 
     should_quit: bool,
-    local_addr: SocketAddr,
-    socket: Arc<UdpSocket>,
+    core: ChatCore,
 }
 #[derive(Debug, Clone, Copy, PartialEq)]
 // 定义焦点枚举
@@ -35,14 +36,18 @@ enum Focus {
     SidebarArea,
 }
 
-// 3. 实现初始化
 impl App {
-    pub async fn init() -> Result<Self, std::io::Error> {
+    pub async fn try_init() -> anyhow::Result<App> {
         let mut list_state = ListState::default();
         list_state.select(Some(0)); // 默认选中第一条消息
 
-        let socket = Arc::new(UdpSocket::bind("[::]:0").await?); //绑定到所有ipv6
-        let local_addr = socket.local_addr()?; //返回实际绑定的地址
+        let cfg = chat_core::CoreConfig::new("~/.chat_history.db");
+        let mut core = chat_core::ChatCore::try_init(&cfg)?;
+        core.swarm
+            .listen_on("/ip4/0.0.0.0/udp/0/quic-v1".parse()?)?;
+        core.swarm.listen_on("/ip4/0.0.0.0/tcp/0".parse()?)?;
+        core.swarm.listen_on("/ip6/::/udp/0/quic-v1".parse()?)?;
+        core.swarm.listen_on("/ip6/::/tcp/0".parse()?)?;
 
         Ok(App {
             current_focus: Focus::Input,
@@ -55,8 +60,7 @@ impl App {
             contact_list_state: list_state,
             input: String::new(),
             should_quit: false,
-            local_addr,
-            socket,
+            core,
         })
     }
 }

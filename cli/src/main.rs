@@ -15,7 +15,7 @@ pub struct Cli {
 }
 
 #[tokio::main]
-async fn main() -> std::io::Result<()> {
+async fn main() -> anyhow::Result<()> {
     let args = Cli::parse();
 
     println!(
@@ -23,7 +23,7 @@ async fn main() -> std::io::Result<()> {
         args.use_json, args.no_tui
     );
     println!("Hello world!\n ");
-    let mut app: App = App::init().await.unwrap();
+    let mut app: App = App::try_init().await.unwrap();
 
     if std::io::stdout().is_terminal() {
         //此处是面向终端用户的输出界面，除此以外是对shell调用，可精简交互

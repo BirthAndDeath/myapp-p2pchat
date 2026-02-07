@@ -4,7 +4,9 @@ use sqlx::{
 };
 
 use std::{error::Error, ops::ControlFlow, str::FromStr, time::Duration};
-pub fn init() -> anyhow::Result<()> {
+
+use crate::CoreConfig;
+pub fn init(cfg: &CoreConfig) -> anyhow::Result<()> {
     let pool_options = SqlitePoolOptions::new()
         .max_connections(10) // 连接池最大连接数 (默认取决于特性)
         .min_connections(0) // 连接池最小（保持）连接数 (默认 0)
@@ -12,7 +14,7 @@ pub fn init() -> anyhow::Result<()> {
         .idle_timeout(Some(Duration::from_secs(10 * 60))) // 空闲连接超时时间（默认 10 分钟）
         .acquire_timeout(Duration::from_secs(30)); // 获取连接的超时时间（默认 30 秒）
 
-    let connect_options = SqliteConnectOptions::from_str("sqlite:///path/to/database.db")?
+    let connect_options = SqliteConnectOptions::from_str(cfg.database_path.as_str())?
         .create_if_missing(true) // 如果数据库文件不存在，则创建（默认 false）
         .read_only(false) // 是否以只读模式打开（默认 false）
         .foreign_keys(true) // 启用或禁用外键约束（默认由 SQLite 编译期决定）

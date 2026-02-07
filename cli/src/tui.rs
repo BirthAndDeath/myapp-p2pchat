@@ -124,18 +124,9 @@ fn tui_render(frame: &mut Frame, app: &App) {
 
     //  渲染状态栏
     let status = match app.current_focus {
-        Focus::Messages => format!(
-            "ipv6: {} 模式: 浏览消息 (↑/↓选择)",
-            app.local_addr.to_string()
-        ),
-        Focus::Input => format!(
-            "ipv6: {} 模式: 输入文本 (Enter发送，Tab切换焦点，Esc退出应用)",
-            app.local_addr.to_string()
-        ),
-        Focus::SidebarArea => format!(
-            "ipv6: {} 模式:选择聊天对象↑/↓选择",
-            app.local_addr.to_string()
-        ),
+        Focus::Messages => format!(" 模式: 浏览消息 (↑/↓选择)"),
+        Focus::Input => format!(" 模式: 输入文本 (Enter发送，Tab切换焦点，Esc退出应用)"),
+        Focus::SidebarArea => format!(" 模式:选择聊天对象↑/↓选择"),
     };
     let status_bar = Paragraph::new(status).block(Block::default().borders(Borders::TOP));
     frame.render_widget(status_bar, messages_area);
@@ -216,6 +207,7 @@ fn handle_input_focus(app: &mut App, key_code: KeyCode) {
             // 发送消息
             if !app.input.trim().is_empty() {
                 app.messages.push(app.input.clone());
+                app.core.sendmessage(app.input.clone());
                 //send
                 app.input.clear();
                 // 自动滚动到最新消息
@@ -242,41 +234,36 @@ impl Focus {
 }
 
 ///tui模式
-pub async fn tui_run(app: &mut App) -> std::io::Result<()> {
+pub async fn tui_run(app: &mut App) -> anyhow::Result<()> {
     let mut event_stream = crossterm::event::EventStream::new();
-    //绑定到ipv6端口
     enable_raw_mode()?;
-    let _targets: Vec<SocketAddr> = vec![];
+
     // 初始化终端
     let mut terminal = Terminal::new(CrosstermBackend::new(stdout()))?;
     terminal.clear()?;
 
-    let (data_tx, mut data_rx) = mpsc::channel::<(usize, SocketAddr, Vec<u8>)>(100);
-    let recv_socket = app.socket.clone();
-    tokio::spawn(async move {
-        let mut buf = [0u8; 1024]; // 接收缓冲区
-        loop {
-            match recv_socket.recv_from(&mut buf).await {
-                Ok((size, src_addr)) => {
-                    // 将接收到的数据和来源地址通过通道发送
-                    let data = buf[..size].to_vec();
-                    if let Err(_) = data_tx.send((size, src_addr, data)).await {
-                        // 通道已关闭，接收任务退出
-                        break;
-                    }
-                }
-                Err(e) => {
-                    eprintln!("接收数据时出错: {}", e);
-                    break;
-                }
-            }
-        }
-    });
+    let mut rx = app
+        .core
+        .rx_message
+        .take()
+        .ok_or("消息通道问题")
+        .expect("消息通道问题");
+    let mut tick = interval(Duration::from_millis(16));
 
     loop {
-        let mut tick = interval(Duration::from_millis(50));
         tokio::select! {
-            biased;
+
+            event = app.core.swarm.select_next_some() => chat_core::swarm_event(event,&mut  app.core),
+
+            Some(msg)=rx.recv()=>{
+                let text = msg.data.as_str();
+                 app.messages.push(format!("\n[网络]  {}",
+                 text));
+                 // 自动滚动到最新消息
+                app.message_list_state.select(Some(app.messages.len() - 1));
+                 terminal.draw(|frame| tui_render(frame, &app))?;
+
+            }
             Some(Ok(event)) = event_stream.next() => {
                 if let Event::Key(key)=event
                 &&key.kind == KeyEventKind::Press{
@@ -291,14 +278,8 @@ pub async fn tui_run(app: &mut App) -> std::io::Result<()> {
             }
 
 
-            Some((size, src_addr, data)) = data_rx.recv() => {
-                // 在这里处理或显示接收到的数据
-                let text = String::from_utf8_lossy(&data);
-                 app.messages.push(format!("\n[网络] 来自 {} 的消息 ({} 字节): {}",
-                    src_addr, size, text));
 
-            }
-            _ = tick.tick() => {}
+            _ = tick.tick() => {terminal.draw(|frame| tui_render(frame, &app))?;}
             else =>{
                 break;
             }

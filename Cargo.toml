@@ -1,4 +1,3 @@
-
 [workspace]
 members = ["chat_core", "src-tauri", "rootcell", "cli"]
 resolver = "3"
