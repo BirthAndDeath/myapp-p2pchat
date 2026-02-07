@@ -8,9 +8,7 @@ use ratatui::text::Text;
 use ratatui::widgets::{Block, Borders, List, ListItem, Paragraph, Wrap};
 use ratatui::{Frame, Terminal};
 use std::io::stdout;
-use std::net::SocketAddr;
 use std::time::Duration;
-use tokio::sync::mpsc;
 use tokio::time::interval;
 
 use crate::{App, Focus};

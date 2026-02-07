@@ -1,7 +1,4 @@
-use sqlx::{
-    SqlitePool,
-    sqlite::{SqliteConnectOptions, SqlitePoolOptions},
-};
+use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
 
 use std::{error::Error, ops::ControlFlow, str::FromStr, time::Duration};
 

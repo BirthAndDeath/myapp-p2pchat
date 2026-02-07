@@ -6,7 +6,6 @@ use std::{
     time::Duration,
 };
 
-use futures::stream::StreamExt;
 use libp2p::{
     Swarm,
     futures::io,

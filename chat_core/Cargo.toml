@@ -22,3 +22,6 @@ rootcell = { workspace = true }
 tracing-subscriber = { version = "0.3.22", features = ["fmt", "env-filter"] }
 sqlx = { version = "0.8.6", features = ["sqlite", "runtime-tokio", "macros"] }
 tokio = "1.49.0"
+[package.metadata.docs.rs]
+# docs.rs 构建时使用
+no-deps = true

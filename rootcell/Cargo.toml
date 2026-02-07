@@ -47,3 +47,6 @@ skip = []
 skip-tree = []
 [lints.rust]
 unsafe_code = "forbid"
+[package.metadata.docs.rs]
+# docs.rs 构建时使用
+no-deps = true

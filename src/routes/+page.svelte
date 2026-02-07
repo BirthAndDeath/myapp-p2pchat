@@ -1,13 +1,13 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
 
-  let name = $state("");
-  let greetMsg = $state("");
+  let message = $state("");
+  let result = $state(false);
 
   async function greet(event: Event) {
     event.preventDefault();
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    greetMsg = await invoke("greet", { name });
+    result = await invoke("send", { message });
   }
 </script>
 
@@ -22,10 +22,14 @@
   <p>Click on the Tauri, Vite, and SvelteKit logos to learn more.</p>
 
   <form class="row" onsubmit={greet}>
-    <input id="greet-input" placeholder="Enter a name..." bind:value={name} />
+    <input
+      id="input-holder"
+      placeholder="Enter message..."
+      bind:value={message}
+    />
     <button type="submit">Greet</button>
   </form>
-  <p>{greetMsg}</p>
+  <p>{result}</p>
 </main>
 
 <style>
@@ -115,7 +119,7 @@
     outline: none;
   }
 
-  #greet-input {
+  #input-holder {
     margin-right: 5px;
   }
 

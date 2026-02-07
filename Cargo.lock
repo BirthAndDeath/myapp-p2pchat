@@ -753,6 +753,7 @@ dependencies = [
 name = "chat"
 version = "0.1.0"
 dependencies = [
+ "chat_core",
  "serde",
  "serde_json",
  "tauri",

@@ -1,7 +1,6 @@
 use crate::App;
 use std::net::SocketAddr;
-use std::sync::Arc;
-pub async fn no_tui_run(app: &mut App) -> std::io::Result<()> {
+pub async fn no_tui_run(_app: &mut App) -> std::io::Result<()> {
     let mut targets: Vec<SocketAddr> = vec![];
 
     //不想写注释了，自己读吧好累（我的命名应该已经很贴切了,大概？）

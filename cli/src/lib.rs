@@ -1,17 +1,14 @@
+// 定义应用状态（Model）
+#![doc = include_str!("../../README.md")]
 use chat_core::ChatCore;
 use ratatui::widgets::ListState;
-use socket2::Socket;
-use std::any;
-use std::net::SocketAddr;
-use std::sync::Arc;
-use tokio::net::UdpSocket;
 pub mod notui;
 pub mod tui;
 
 /*
 sendmessage /recv todo
 */
-// 定义应用状态（Model）
+
 pub struct App {
     // --- 焦点系统 ---
     current_focus: Focus,
