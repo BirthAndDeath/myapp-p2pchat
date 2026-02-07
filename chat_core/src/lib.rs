@@ -15,6 +15,7 @@ use libp2p::{
     tcp, yamux,
 };
 use tokio::sync::mpsc;
+use tracing_subscriber::EnvFilter;
 #[derive(NetworkBehaviour)]
 pub struct MyBehaviour {
     gossipsub: gossipsub::Behaviour,
@@ -40,6 +41,19 @@ pub struct ChatMeassage {
     pub event: MessageEvent,
     pub data: String,
 }
+fn init_logger() {
+    let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
+    let _ = tracing_subscriber::fmt()
+        .with_env_filter(filter)
+        .with_target(true) // 显示模块路径
+        .with_thread_ids(true) // 显示线程 ID
+        .with_file(true) // 显示文件名
+        .with_line_number(true) // 显示行号
+        .with_ansi(true) // 彩色输出
+        .compact() // 紧凑格式
+        .try_init();
+}
+
 pub struct ChatCore {
     pub swarm: Swarm<MyBehaviour>,
     pub topic: gossipsub::IdentTopic,
@@ -48,6 +62,7 @@ pub struct ChatCore {
 }
 impl ChatCore {
     pub fn try_init(cfg: &CoreConfig) -> anyhow::Result<Self> {
+        init_logger();
         storage::init(cfg)?;
         let mut swarm = swarm_init()?;
         // Create a Gossipsub topic
